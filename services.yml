@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    run: sap-api-integrations-reads-rmq-kube
+    run: sap-api-integrations-measurement-document-reads-rmq-kube
   name: sap-api-integrations-measurement-document-reads-rmq-kube
 spec:
   replicas: 1
@@ -36,7 +36,7 @@ spec:
             - name: RMQ_VHOST
               value: "sap-test"
             - name: RMQ_QUEUE_FROM
-              value: "sap-api-integrations-xxxxxxxx-reads-rmq-kube"
+              value: "sap-api-integrations-measurement-document-reads-rmq-kube"
             - name: RMQ_QUEUE_TO
               value: "sap-sql-update-kube"
             - name: SAP_API_BASE_URL

@@ -17,20 +17,20 @@ type RMQOutputter interface {
 }
 
 type SAPAPICaller struct {
-	baseURL string
-	apiKey  string
+	baseURL      string
+	apiKey       string
 	outputQueues []string
 	outputter    RMQOutputter
-	log     *logger.Logger
+	log          *logger.Logger
 }
 
 func NewSAPAPICaller(baseUrl string, outputQueueTo []string, outputter RMQOutputter, l *logger.Logger) *SAPAPICaller {
 	return &SAPAPICaller{
-		baseURL: baseUrl,
-		apiKey:  GetApiKey(),
+		baseURL:      baseUrl,
+		apiKey:       GetApiKey(),
 		outputQueues: outputQueueTo,
 		outputter:    outputter,
-		log:     l,
+		log:          l,
 	}
 }
 
@@ -58,6 +58,11 @@ func (c *SAPAPICaller) Header(measurementDocument string) {
 		c.log.Error(err)
 		return
 	}
+	err = c.outputter.Send(c.outputQueues[0], map[string]interface{}{"message": data, "function": "MeasurementDocumentHeader"})
+	if err != nil {
+		c.log.Error(err)
+		return
+	}
 	c.log.Info(data)
 }
 
@@ -66,7 +71,7 @@ func (c *SAPAPICaller) callMeasurementDocumentSrvAPIRequirementHeader(api, measu
 	req, _ := http.NewRequest("GET", url, nil)
 
 	c.setHeaderAPIKeyAccept(req)
-    c.getQueryWithHeader(req, measurementDocument)
+	c.getQueryWithHeader(req, measurementDocument)
 
 	resp, err := new(http.Client).Do(req)
 	if err != nil {
